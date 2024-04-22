@@ -1,6 +1,9 @@
 import express from 'express'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
+// when we export default then we can access this with another name also just like router
+import userRoutes from "./routes/user.route.js"
+
 
 // It is used for access the variable from .env
 dotenv.config()
@@ -18,3 +21,5 @@ const app = express()
 app.listen(3000, ()=>{
     console.log("Server is running on port 3000");
 })
+
+app.use('/api/user' , userRoutes)
