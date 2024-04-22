@@ -9,6 +9,7 @@ import authRoutes from "./routes/auth.route.js"
 // It is used for access the variable from .env
 dotenv.config()
 
+// connecting to database 
 mongoose.connect(process.env.DB_CONN)
 .then(()=>{
     console.log("MongoDB is connected");
@@ -18,10 +19,25 @@ mongoose.connect(process.env.DB_CONN)
 })
 
 const app = express()
+// convert user entered data into json formate
 app.use(express.json())
+
+
 app.listen(3000, ()=>{
     console.log("Server is running on port 3000");
 })
 
+// Routes for Various functionality
 app.use('/api/user' , userRoutes)
 app.use('/api/auth' , authRoutes)
+
+// Middleware for handle the error 
+app.use((err, req, res, next)=>{
+    const statusCode = err.statusCode || 500;
+    const message = err.message || "Internal server error!";
+    res.status(statusCode).json({
+        success : false,
+        statusCode,
+        message
+    });
+});
