@@ -1,12 +1,19 @@
 import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { signInStart,signInSuccess, signInFailure } from "../redux/user/userSlice.js";
+import { useDispatch , useSelector } from "react-redux";
 
 export default function SignIn() {
   const [formData, setFormData] = useState({});
-  const [errorMessage, setErrorMessage] = useState("");
-  const [loding, setLoding] = useState(false);
+
+  // const [errorMessage, setErrorMessage] = useState("");
+  // const [loding, setLoding] = useState(false);
+
+  const {loding, error : errorMessage} = useSelector(state => state.user)
+
   const navigate = useNavigate();
+  const dispatch = useDispatch()
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
@@ -15,11 +22,15 @@ export default function SignIn() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.email || !formData.password) {
-      return setErrorMessage("Please Fill Out All Fields");
+      // return setErrorMessage("Please Fill Out All Fields");
+       dispatch(signInFailure("Please Fill Out All Fields"))
     }
     try {
-      setLoding(true)
-      setErrorMessage(null)
+      // setLoding(true),
+      // setErrorMessage(null)
+      
+      // AFTER USING REACT-REDUX
+      dispatch(signInStart());
       const res = await fetch("/api/auth/signin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -28,16 +39,23 @@ export default function SignIn() {
       const data = await res.json();
       if(data.success === false)
       {
-        return setErrorMessage(data.message)
+        // return setErrorMessage(data.message)
+        // after using redux
+        dispatch(signInFailure(data.message))
       }
-      setLoding(false)
+      // setLoding(false)
+
+
       if(res.ok)
       {
+        dispatch(signInSuccess(data))
         navigate('/')
       }
     } catch (e) {
-      setErrorMessage(e.message)
-      setLoding(false)
+      // setErrorMessage(e.message)
+      // setLoding(false)
+
+      dispatch(signInFailure(e.message))
 
     }
   };
