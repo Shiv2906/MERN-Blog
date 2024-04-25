@@ -8,6 +8,7 @@ import { PersistGate } from 'redux-persist/integration/react'
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
+  // we are using persist for stored data permantly untill user not signout
   <PersistGate persistor={persistor}>
   <Provider store={store}>
     <App />

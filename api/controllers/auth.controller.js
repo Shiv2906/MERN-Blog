@@ -73,3 +73,51 @@ export const signin = async (req, res, next) => {
     next(error);
   }
 };
+
+// functionality for take the info from the google using farebase
+
+export const google = async (req, res, next)=>{
+// extract info from req.body
+const {name, email,photoUrl} = req.body;
+
+try {
+  // If user is already exist
+  const user = await User.findOne({email});
+  if(user){
+    const token = jwt.sign({id : user._id}, process.env.JWT_SECURET_KEY);
+    const {password, ...rest} = user._doc;
+    res.status(200).cookie('access_token', token,{
+      httpOnly : true,
+    }).json(rest);
+  }else{
+    // else  create new exist
+    // when we access data from google it does not provide password that's why we need to generate rendom password we can update this password in future 
+    const generatePassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+
+    // hash this generated password
+    const hashedPassword = bcryptjs.hashSync(generatePassword, 10);
+
+    const newUser = new User({
+      username : name.toLowerCase().split(' ').join('') + Math.random.toString(9).slice(-4),
+      email,
+      password : hashedPassword,
+      profilePicture: photoUrl
+
+    });
+
+    await newUser.save();
+    const token = jwt.sign({id : _id}, process.env.JWT_SECURET_KEY);
+    const {password, ...rest} = newUser._doc;
+
+    res.status(200).cookie('access_token', token,{
+      httpOnly:true
+    }).json(rest);
+
+  }
+  
+} catch (error) {
+  // we use our middleware here
+  next(error)
+  
+}
+}

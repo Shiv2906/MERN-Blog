@@ -8,6 +8,7 @@ const rootReducer = combineReducers({
   user : userReducer,
 });
 
+// which store data in local storage 
 const persistConfig = {
   key : 'root',
   storage,
