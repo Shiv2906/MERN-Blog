@@ -5,6 +5,8 @@ import dotenv from 'dotenv'
 import userRoutes from "./routes/user.route.js"
 import authRoutes from "./routes/auth.route.js"
 
+import cookieParser from 'cookie-parser'
+
 
 // It is used for access the variable from .env
 dotenv.config()
@@ -21,6 +23,9 @@ mongoose.connect(process.env.DB_CONN)
 const app = express()
 // convert user entered data into json formate
 app.use(express.json())
+
+// use cookieParser for take info from the stored cookie
+app.use(cookieParser()) ;
 
 
 app.listen(3000, ()=>{
