@@ -14,7 +14,7 @@ export default function FooterCom() {
     <Footer container className="border border-t-8 border-teal-300">
       <div className="w-full max-w-7xl mx-auto">
         <div className="grid w-full justify-between sm:flex md:grid-cols-1">
-          <div className="mt-5">
+          <div className="mt-3">
             <Link
               to="/"
               className="self-center whitespace-nowrap text-9xlxl sm:text-xl font-bold dark:text-white"
@@ -25,7 +25,7 @@ export default function FooterCom() {
               Blog
             </Link>
           </div>
-          <div className="grid grid-cols-2 gap-3 mt-4 sm:grid-cols-3 sm:gap-6">
+          <div className="grid grid-cols-2 gap-3 mt-3 sm:grid-cols-3 sm:gap-6">
             <div>
               <Footer.Title title="About" />
               <Footer.LinkGroup col>

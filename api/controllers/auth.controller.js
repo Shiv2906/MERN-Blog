@@ -58,7 +58,7 @@ export const signin = async (req, res, next) => {
     }
 
     // create token using jwt
-    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECURET_KEY);
+    const token = jwt.sign({ id: validUser._id, isAdmin : validUser.isAdmin }, process.env.JWT_SECURET_KEY);
 
     // for seprate the password from user entered details we use 
     const {password : pass, ...rest} = validUser._doc;
@@ -84,7 +84,7 @@ try {
   // If user is already exist
   const user = await User.findOne({email});
   if(user){
-    const token = jwt.sign({id : user._id}, process.env.JWT_SECURET_KEY);
+    const token = jwt.sign({id : user._id, isAdmin : user.isAdmin}, process.env.JWT_SECURET_KEY);
     const {password, ...rest} = user._doc;
     res.status(200).cookie('access_token', token,{
       httpOnly : true,
@@ -106,7 +106,7 @@ try {
     });
 
     await newUser.save();
-    const token = jwt.sign({id : _id}, process.env.JWT_SECURET_KEY);
+    const token = jwt.sign({id : _id, isAdmin : newUser.isAdmin}, process.env.JWT_SECURET_KEY);
     const {password, ...rest} = newUser._doc;
 
     res.status(200).cookie('access_token', token,{
