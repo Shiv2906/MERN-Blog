@@ -3,18 +3,35 @@ import React from "react";
 import { useLocation, Link } from "react-router-dom";
 import { AiOutlineSearch } from "react-icons/ai";
 import { FaMoon, FaSun } from "react-icons/fa";
-import {useSelector, useDispatch} from "react-redux"
+import { useSelector, useDispatch } from "react-redux";
 import { toggleTheme } from "../redux/theme/themeSlice";
 import { theme } from "flowbite-react";
+import { signoutSuccess } from "../redux/user/userSlice.js";
 
 export default function Header() {
-    // useLocation is used for track the which page is active
-    const path = useLocation().pathname
-    const dispatch = useDispatch();
-    const {currentUser} = useSelector(state => state.user)
-    const {theme} = useSelector(state => state.theme);
+  // useLocation is used for track the which page is active
+  const path = useLocation().pathname;
+  const dispatch = useDispatch();
+  const { currentUser } = useSelector((state) => state.user);
+  const { theme } = useSelector((state) => state.theme);
 
+  const handleSignout = async () => {
+    try {
+      const res = await fetch("/api/user/signout", {
+        method: "POST",
+      });
 
+      const data = await res.json();
+
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        dispatch(signoutSuccess());
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
   return (
     <Navbar className="border-b-2">
@@ -42,53 +59,55 @@ export default function Header() {
       </Button>
 
       <div className="flex gap-2 md:order-2">
-        <Button className="w-12 h-10 hidden sm:inline" color="gray" pill onClick={() => dispatch(toggleTheme
-        ())}>
-         {theme === "light" ? <FaSun/> : <FaMoon/>}
-          </Button>
-          {currentUser ? (
-            <Dropdown
-            arrowIcon = {false}
+        <Button
+          className="w-12 h-10 hidden sm:inline"
+          color="gray"
+          pill
+          onClick={() => dispatch(toggleTheme())}
+        >
+          {theme === "light" ? <FaSun /> : <FaMoon />}
+        </Button>
+        {currentUser ? (
+          <Dropdown
+            arrowIcon={false}
             inline
             label={
-              <Avatar
-              alt="user"
-              img={currentUser. profilePicture}
-              rounded
-              />
+              <Avatar alt="user" img={currentUser.profilePicture} rounded />
             }
-            >
-              <Dropdown.Header>
-                <span className="block text-sm">@{currentUser.username}</span>
-                <span className="block text-sm font-medium truncate">{currentUser.email}</span>
-              </Dropdown.Header>
+          >
+            <Dropdown.Header>
+              <span className="block text-sm">@{currentUser.username}</span>
+              <span className="block text-sm font-medium truncate">
+                {currentUser.email}
+              </span>
+            </Dropdown.Header>
 
-              <Link to={'/dashboard?tab=profile'}>
+            <Link to={"/dashboard?tab=profile"}>
               <Dropdown.Item>Profile</Dropdown.Item>
-              <Dropdown.Divider/>
-              <Dropdown.Item>Sign Out</Dropdown.Item>
-              </Link>
-
-            </Dropdown>
-          ):(
-            <Link to="/sign-in">
-            <Button gradientDuoTone="purpleToBlue" outline>Sign In</Button>
+              <Dropdown.Divider />
+              <Dropdown.Item onClick={handleSignout}>Sign Out</Dropdown.Item>
+            </Link>
+          </Dropdown>
+        ) : (
+          <Link to="/sign-in">
+            <Button gradientDuoTone="purpleToBlue" outline>
+              Sign In
+            </Button>
           </Link>
-          )
-}
-        
-        <Navbar.Toggle/>
+        )}
+
+        <Navbar.Toggle />
       </div>
       <Navbar.Collapse>
         {/* as={"div"} is using because here we are using two Link tag inside another which is not allow it throw an errro on console */}
 
-        <Navbar.Link active={path === '/'} as={"div"}>
+        <Navbar.Link active={path === "/"} as={"div"}>
           <Link to="/">Home</Link>
         </Navbar.Link>
-        <Navbar.Link active={path === '/about'} as={"div"}>
+        <Navbar.Link active={path === "/about"} as={"div"}>
           <Link to="/about">About</Link>
         </Navbar.Link>
-        <Navbar.Link active={path === '/projects'} as={"div"}>
+        <Navbar.Link active={path === "/projects"} as={"div"}>
           <Link to="/projects">Projects</Link>
         </Navbar.Link>
       </Navbar.Collapse>
