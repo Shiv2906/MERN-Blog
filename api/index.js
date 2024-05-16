@@ -8,6 +8,7 @@ import postRoutes from './routes/post.route.js'
 import commentRoutes from './routes/comment.route.js'
 
 import cookieParser from 'cookie-parser'
+import path from'path'
 
 
 // It is used for access the variable from .env
@@ -22,6 +23,8 @@ mongoose.connect(process.env.DB_CONN)
     console.log("Error is : ", e);
 })
 
+// it is used for deploy on render
+const __dirname = path.resolve();
 const app = express()
 // convert user entered data into json formate
 app.use(express.json())
@@ -39,6 +42,13 @@ app.use('/api/user' , userRoutes)
 app.use('/api/auth' , authRoutes)
 app.use('/api/post' , postRoutes)
 app.use('/api/comment' , commentRoutes)
+
+// static path to connect dirname with dist 
+app.use(express.static(path.join(__dirname, '/client/dist')));
+
+app.get('*', (req, res) =>{
+    res.sendFile(path.join(__dirname,'/client', 'dist', 'inde.html'));
+} );
 
 // Middleware for handle the error 
 app.use((err, req, res, next)=>{
